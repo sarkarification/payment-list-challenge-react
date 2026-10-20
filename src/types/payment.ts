@@ -1,5 +1,12 @@
-export interface Payment {
-}
+import z from "zod";
+import {
+  paymentSchema,
+  paymentSearchParamsSchema,
+  paymentSearchResponseSchema,
+} from "@src/schemas/payment";
 
-export interface PaymentSearchResponse {
-}
+export type PaymentSearchParams = z.input<typeof paymentSearchParamsSchema>;
+
+export type Payment = z.infer<typeof paymentSchema>;
+
+export type PaymentSearchResponse = z.infer<typeof paymentSearchResponseSchema>;

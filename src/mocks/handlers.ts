@@ -8,9 +8,10 @@ import {
   mockPayments789,
 } from "./mockPaymentsData";
 import { API_URL } from "../constants";
+import { Payment, PaymentSearchResponse } from "@src/types/payment";
 
 // Create a map of all payments for easy lookup
-const allPayments: any[] = [
+const allPayments: Payment[] = [
   ...mockPayments134,
   ...mockPayments456,
   ...mockPayments789,
@@ -20,8 +21,8 @@ const allPayments: any[] = [
 ];
 
 // Create a map for payment ID lookup
-const paymentIdMap: { [key: string]: any } = {};
-allPayments.forEach(payment => {
+const paymentIdMap: { [key: string]: Payment } = {};
+allPayments.forEach((payment) => {
   paymentIdMap[payment.id] = payment;
 });
 
@@ -33,47 +34,57 @@ export const handlers = [
     const page = parseInt(url.searchParams.get("page") || "1", 10);
     const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
 
+    if (search === "pay_empty") {
+      return HttpResponse.json({
+        payments: [],
+        total: 0,
+        page,
+        pageSize,
+      });
+    }
+
     if (search === "pay_404") {
       return HttpResponse.json(
         { message: "Payment not found" },
-        { status: 404, statusText: "Not Found" }
+        { status: 404, statusText: "Not Found" },
       );
     }
 
     if (search === "401") {
       return HttpResponse.json(
         { message: "Unauthorized access" },
-        { status: 401, statusText: "Unauthorized" }
+        { status: 401, statusText: "Unauthorized" },
       );
     }
 
     if (search === "pay_500") {
       return HttpResponse.json(
         { message: "Internal Server Error" },
-        { status: 500, statusText: "Internal Server Error" }
+        { status: 500, statusText: "Internal Server Error" },
       );
     }
 
-    let filteredPayments: any[] = [];
+    let filteredPayments: Payment[] = [];
 
     // Filter payments based on search criteria and filters
     filteredPayments = allPayments.filter((pay) => {
       // Search filter
-      const matchesSearch = !search || 
+      const matchesSearch =
+        !search ||
         pay.id.toLowerCase().includes(search) ||
         pay.status?.toLowerCase().includes(search) ||
         pay.currency?.toLowerCase().includes(search);
-      
+
       // Currency filter
       const matchesCurrency = !currency || pay.currency === currency;
-      
+
       return matchesSearch && matchesCurrency;
     });
 
     if (filteredPayments.length === 0) {
       return HttpResponse.json(
         { message: "Payment not found" },
-        { status: 404, statusText: "Not Found" }
+        { status: 404, statusText: "Not Found" },
       );
     }
 
@@ -81,7 +92,7 @@ export const handlers = [
     const start = (page - 1) * pageSize;
     const paginatedPayments = filteredPayments.slice(start, start + pageSize);
 
-    const responsePayload: any = {
+    const responsePayload: PaymentSearchResponse = {
       payments: paginatedPayments,
       total,
       page,

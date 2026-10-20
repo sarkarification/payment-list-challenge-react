@@ -123,7 +123,7 @@ export const TableWrapper = styled.div`
 
 export const Table = styled.table`
   min-width: 100%;
-  text-sm: 14px;
+  font-size: 0.875rem;
   text-align: left;
 `;
 
@@ -138,6 +138,26 @@ export const TableRow = styled.tr`
 
   &:hover {
     background-color: #f1f5f9;
+  }
+`;
+
+export const SkeletonTableRow = styled.tr`
+  height: 4rem;
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 `;
 
@@ -157,8 +177,8 @@ export const StatusBadge = styled.span<{ status: string }>`
     props.status === "completed"
       ? `background-color: #d1fae5; color: #15803d;`
       : props.status === "pending"
-      ? `background-color: #fef3c7; color: #92400e;`
-      : `background-color: #fee2e2; color: #b91c1c;`}
+        ? `background-color: #fef3c7; color: #92400e;`
+        : `background-color: #fee2e2; color: #b91c1c;`}
 `;
 
 export const Spinner = styled.div`
